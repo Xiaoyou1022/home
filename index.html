@@ -1,0 +1,62 @@
+<!--jQuery-->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<!--Bootstrap-->
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"></link>
+
+<script src="https://apis.google.com/js/api:client.js"></script>
+
+<!--登入、登出按鈕-->
+<button id="GOOGLE_login" class="btn btn-large btn-primary">Log in</button> <button id="GOOGLE_logout" class="btn btn-large btn-warning">Log out</button>
+
+目前狀態：
+<span id="GOOGLE_STATUS_2"></span>
+<script>
+// 進行登入程序
+var startApp = function() {
+gapi.load("auth2", function() {
+auth2 = gapi.auth2.init({
+client_id: "8643433183-atggnrpg85673u4uiokge5rgi5103n69.apps.googleusercontent.com", // 用戶端 ID
+cookiepolicy: "single_host_origin"
+});
+attachSignin(document.getElementById("GOOGLE_login"));
+});
+};
+
+function attachSignin(element) {
+auth2.attachClickHandler(element, {},
+// 登入成功
+function(googleUser) {
+var profile = googleUser.getBasicProfile(),
+$target = $("#GOOGLE_STATUS_2"),
+html = "";
+
+html += "ID: " + profile.getId() + "<br/>";
+html += "Name： " + profile.getName() + "<br/>";
+html += "Icon：<img scr=" + profile.getImageUrl() + " aria-hidden='true' data-noaft=''><br/>";
+html += "Email：" + profile.getEmail() + "<br/>";
+$target.html(html);
+},
+// 登入失敗
+function(error) {
+$("#GOOGLE_STATUS_2").html("登入失敗");
+alert(JSON.stringify(error, undefined, 2));
+});
+}
+
+startApp();
+
+// 點擊登入
+$("#GOOGLE_login").click(function() {
+// 進行登入程序
+startApp();
+});
+
+// 點擊登出
+$("#GOOGLE_logout").click(function() {
+var auth2 = gapi.auth2.getAuthInstance();
+auth2.signOut().then(function() {
+// 登出後的動作
+$("#GOOGLE_STATUS_2").html("已登出");
+});
+});
+</script>
